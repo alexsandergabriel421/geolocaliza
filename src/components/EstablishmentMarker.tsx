@@ -1,22 +1,39 @@
 import React from "react";
-import { LatLng } from "../utils/distance";
+import { Platform } from "react-native";
 
 type Props = {
-  establishment: { id: number; name: string; lat: number; lng: number };
+  establishment: { id: number; name: string; lat: number; lng: number; distance?: number };
   onClick?: (id: number) => void;
-  isWeb?: boolean;
 };
 
-export default function EstablishmentMarker({ establishment, onClick, isWeb }: Props) {
-  if (isWeb) {
+export default function EstablishmentMarker({ establishment, onClick }: Props) {
+  // --- WEB (Leaflet) ---
+  if (Platform.OS === "web") {
     const { Marker, Popup } = require("react-leaflet");
+
     return (
-      <Marker position={{ lat: establishment.lat, lng: establishment.lng }}>
-        <Popup>{establishment.name}</Popup>
+      <Marker
+        position={{ lat: establishment.lat, lng: establishment.lng }}
+        eventHandlers={{ click: () => onClick && onClick(establishment.id) }}
+      >
+        <Popup>
+          <strong>{establishment.name}</strong>
+          {establishment.distance !== undefined && (
+            <p>{Math.round(establishment.distance)} m</p>
+          )}
+        </Popup>
       </Marker>
     );
   }
 
-  // Para mobile você pode criar cards ou um Marker do react-native-maps
-  return null;
+  // --- MOBILE (react-native-maps) ---
+  const { Marker: RNMarker } = require("react-native-maps");
+
+  return (
+    <RNMarker
+      coordinate={{ latitude: establishment.lat, longitude: establishment.lng }}
+      onPress={() => onClick && onClick(establishment.id)}
+      pinColor="red"
+    />
+  );
 }

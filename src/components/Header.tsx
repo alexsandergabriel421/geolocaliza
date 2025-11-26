@@ -10,6 +10,15 @@ export default function Header({ title }: { title: string }) {
 }
 
 const styles = StyleSheet.create({
-  header: { height: 60, backgroundColor: "#6200ee", justifyContent: "center", alignItems: "center" },
-  title: { color: "white", fontSize: 20, fontWeight: "bold" },
+  header: {
+    height: 60,
+    backgroundColor: "#4a90e2",
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  title: { color: "white", fontSize: 22, fontWeight: "bold" },
 });

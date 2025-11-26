@@ -1,13 +1,18 @@
 import React from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 export default function HomeScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bem-vindo ao App de Localização!</Text>
-      <Button title="Ir para o Mapa" onPress={() => navigation.navigate("Map")} />
-      <View style={{ height: 20 }} />
-      <Button title="Configurações" onPress={() => navigation.navigate("Settings")} />
+
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => navigation.navigate("Map")}
+      >
+        <Text style={styles.cardTitle}>🗺️ Ver Mapa</Text>
+        <Text style={styles.cardSubtitle}>Veja lojas próximas e sua localização</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -15,14 +20,38 @@ export default function HomeScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 16,
+    backgroundColor: "#F5F5F5",
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 30,
     textAlign: "center",
+    color: "#333",
+  },
+  card: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 15,
+    width: "90%",
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 5,
+    color: "#222",
+  },
+  cardSubtitle: {
+    fontSize: 14,
+    color: "#666",
   },
 });

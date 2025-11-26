@@ -7,6 +7,7 @@ import SettingsScreen from "./src/screens/SettingsScreen";
 import MapScreenWeb from "./src/screens/MapScreenWeb"; // Web só importa Web
 
 const Stack = createNativeStackNavigator();
+console.log(">>>>> USANDO MapScreenWeb.tsx <<<<<");
 
 export default function App() {
   return (
