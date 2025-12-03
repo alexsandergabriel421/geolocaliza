@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, Dimensions } from "react-native";
 import MapView, { Marker, Circle } from "react-native-maps";
 import * as Location from "expo-location";
+import { distanceBetween, formatDistance } from "../utils/distance";
 
 const geofenceRadius = 200;
 const clickRadius = 200;
@@ -11,19 +12,6 @@ const nearbyEstablishments = [
   { id: "2", name: "Mercado São Paulo", latitude: -23.5500, longitude: -46.6335 },
   { id: "3", name: "Farmácia Paulista", latitude: -23.5508, longitude: -46.6338 },
 ];
-
-const haversineDistance = (coord1: { latitude: number; longitude: number }, coord2: { latitude: number; longitude: number }) => {
-  const R = 6371000;
-  const dLat = ((coord2.latitude - coord1.latitude) * Math.PI) / 180;
-  const dLng = ((coord2.longitude - coord1.longitude) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((coord1.latitude * Math.PI) / 180) *
-      Math.cos((coord2.latitude * Math.PI) / 180) *
-      Math.sin(dLng / 2) ** 2;
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-};
 
 export default function MapScreenMobile() {
   const [location, setLocation] = useState({ latitude: -23.5505, longitude: -46.6333 });
@@ -38,7 +26,7 @@ export default function MapScreenMobile() {
         setLocation(current);
 
         const nearby = nearbyEstablishments.filter(
-          (est) => haversineDistance(current, { latitude: est.latitude, longitude: est.longitude }) <= clickRadius
+          (est) => distanceBetween(current.latitude, current.longitude, est.latitude, est.longitude) <= clickRadius
         );
         setNearbyList(nearby);
       }
@@ -57,21 +45,18 @@ export default function MapScreenMobile() {
         }}
         showsUserLocation
       >
-        {/* Círculos na posição do usuário */}
         <Circle center={location} radius={geofenceRadius} strokeColor="blue" fillColor="rgba(0,0,255,0.1)" />
         <Circle center={location} radius={clickRadius} strokeColor="green" fillColor="rgba(0,255,0,0.2)" />
 
-        {/* Estabelecimentos */}
         {nearbyEstablishments.map((est) => {
-          const distance = haversineDistance(location, { latitude: est.latitude, longitude: est.longitude });
+          const distance = distanceBetween(location.latitude, location.longitude, est.latitude, est.longitude);
           const pinColor = distance <= clickRadius ? "green" : "red";
           return <Marker key={est.id} coordinate={{ latitude: est.latitude, longitude: est.longitude }} pinColor={pinColor} title={est.name} />;
         })}
       </MapView>
 
-      {/* Lista flutuante no rodapé */}
       <View style={styles.listContainer}>
-        <Text style={styles.listTitle}>Estabelecimentos próximos (50m)</Text>
+        <Text style={styles.listTitle}>Estabelecimentos próximos</Text>
         {nearbyList.length === 0 ? (
           <Text style={styles.noNearby}>Nenhum estabelecimento próximo</Text>
         ) : (
@@ -79,8 +64,8 @@ export default function MapScreenMobile() {
             data={nearbyList}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => {
-              const distance = Math.round(haversineDistance(location, { latitude: item.latitude, longitude: item.longitude }));
-              return <Text style={styles.listItem}>{item.name} - {distance} m</Text>;
+              const distance = distanceBetween(location.latitude, location.longitude, item.latitude, item.longitude);
+              return <Text style={styles.listItem}>{item.name} - {formatDistance(distance)}</Text>;
             }}
           />
         )}

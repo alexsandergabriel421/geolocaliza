@@ -6,8 +6,10 @@ export const checkGeofence = (
   geofence: { latitude: number; longitude: number; radius: number }
 ) => {
   const distance = distanceBetween(
-    { lat, lng: lon },
-    { lat: geofence.latitude, lng: geofence.longitude }
+    lat,
+    lon,
+    geofence.latitude,
+    geofence.longitude
   );
 
   return distance <= geofence.radius;
